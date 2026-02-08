@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       apiBase:
         process.env.NODE_ENV === "development"
           ? "https://dlz.jiatianacc.com/"
-          : "https://dlz.jiatianacc.com/",
+          : "https://dlz-server.jiatianacc.com/",
       // : 'https://dlz.jiatianacc.com/prod-api/'
     },
     metaPixel: {
