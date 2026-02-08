@@ -1,0 +1,12 @@
+{
+    "i18n-ally.localesPaths": [
+        "i18n",
+        "i18n/locales"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "liveServer.settings.port": 5501,
+}

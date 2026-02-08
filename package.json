@@ -1,0 +1,30 @@
+{
+  "name": "jt-nuxt-mall",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@bootstrap-vue-next/nuxt": "^0.42.0",
+    "@nuxtjs/i18n": "^9.0.0",
+    "@pinia/nuxt": "^0.11.3",
+    "bootstrap": "^5.3.8",
+    "bootstrap-vue-next": "^0.42.0",
+    "mathjs": "^15.1.0",
+    "nuxt": "^4.2.2",
+    "nuxt-meta-pixel": "^2.0.2",
+    "swiper": "^12.0.3",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "less": "^4.5.1",
+    "less-loader": "^12.3.0"
+  }
+}

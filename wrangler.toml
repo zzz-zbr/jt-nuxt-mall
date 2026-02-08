@@ -1,0 +1,8 @@
+name="jt-nuxt-mall"
+compatibility_date = "2025-12-26"
+
+
+[[d1_databases]]
+binding = "jiatian"
+database_name = "jiatian"
+database_id = "726e5759-71df-441d-b51b-42da6a632348" 

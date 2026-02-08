@@ -1,0 +1,33 @@
+@import "root.less";
+body {
+  font-size: 14px;
+  background: #f1f1f1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#__nuxt {
+  background: #f1f1f1;
+}
+
+.b-form-group {
+  .form-label {
+    color: #5b5b5b;
+    font-family: PingFang-SC, PingFang-SC;
+  }
+}
+.b-form-group.required {
+  ::before {
+    content: "*";
+    color: red;
+  }
+}
+
+.form-control {
+  &::placeholder {
+    color: #9a9898 !important;
+  }
+}
