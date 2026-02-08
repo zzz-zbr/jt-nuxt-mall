@@ -1,24 +1,14 @@
 <template>
   <ClientOnly>
-    <JtSwipper
-      v-if="images.length"
-      ref="jtSwipperRef"
-      :sources="images"
-      @sliderMove="sliderMove"
-    ></JtSwipper>
+    <JtSwipper v-if="images.length" ref="jtSwipperRef" :sources="images" @sliderMove="sliderMove"></JtSwipper>
   </ClientOnly>
 
   <div class="sec-content">
     <div class="jt-scroll-img">
       <div class="img-content">
-        <div
-          class="img-item"
-          v-for="(item, index) in scrollImages"
-          @click="clickImg(item, item.realIndex)"
-          :class="currentImg?.sindex === item.sindex ? 'actived' : ''"
-          :key="item.realIndex"
-          :id="`img-item${item.realIndex}`"
-        >
+        <div class="img-item" v-for="(item, index) in scrollImages" @click="clickImg(item, item.realIndex)"
+          :class="currentImg?.sindex === item.sindex ? 'actived' : ''" :key="item.realIndex"
+          :id="`img-item${item.realIndex}`">
           <img :src="item.src" alt="" />
         </div>
       </div>
@@ -26,18 +16,13 @@
     <div class="product-title">{{ productInfo?.title }}</div>
     <div class="sales-price">
       <span>
-        <span class="now-price"
-          >{{ productInfo?.icon ? productInfo?.icon : "" }}
-          {{ currentSku?.price || 0.0 }}</span
-        >
-        <span class="old-price" v-show="currentSku?.originalPrice"
-          >{{ productInfo?.icon ? productInfo?.icon : "" }}
-          {{ currentSku?.originalPrice || 0.0 }}</span
-        >
+        <span class="now-price">{{ productInfo?.icon ? productInfo?.icon : "" }}
+          {{ currentSku?.price || 0.0 }}</span>
+        <span class="old-price" v-show="currentSku?.originalPrice">{{ productInfo?.icon ? productInfo?.icon : "" }}
+          {{ currentSku?.originalPrice || 0.0 }}</span>
       </span>
-      <span class="sales" v-show="currentSku?.virtualSales"
-        >{{ $t("single.sales") }} {{ currentSku?.virtualSales }}</span
-      >
+      <span class="sales" v-show="currentSku?.virtualSales">{{ $t("single.sales") }} {{ currentSku?.virtualSales
+      }}</span>
     </div>
     <div class="sec-icon">
       <img alt="" src="assets/svg/car.svg" />
@@ -59,55 +44,33 @@
     <div class="order-info">
       <div v-for="sku in attrDefinitions">
         <div class="product-spec">
-          <span class="product-spec-label" v-show="sku.name"
-            >{{ sku.name }}：</span
-          >
+          <span class="product-spec-label" v-show="sku.name">{{ sku.name }}：</span>
           <span class="product-spec-name">{{
             currentSku?.attrValues[sku.name]
           }}</span>
         </div>
-        <div
-          class="product-spec-radioGroup"
-          v-if="sku.values && sku.values.length"
-        >
-          <div
-            class="product-spec-radio"
-            :class="currentSku?.attrValues[sku.name] === value ? 'active' : ''"
-            v-for="value in sku.values"
-            :key="value"
-            @click="changeSku(sku, value)"
-          >
+        <div class="product-spec-radioGroup" v-if="sku.values && sku.values.length">
+          <div class="product-spec-radio" :class="currentSku?.attrValues[sku.name] === value ? 'active' : ''"
+            v-for="value in sku.values" :key="value" @click="changeSku(sku, value)">
             {{ value }}
           </div>
         </div>
       </div>
       <BFormGroup :label="$t('single.quantity')">
         <BFormSpinbutton inline min="1" max="999" v-model="amount" />
-        <span class="jtmall-inventory" v-show="currentSku?.stock"
-          >{{ $t("single.inventory") }}
+        <span class="jtmall-inventory" v-show="currentSku?.stock">{{ $t("single.inventory") }}
           <span style="margin-left: 4px">{{ currentSku?.stock }}</span>
         </span>
       </BFormGroup>
       <Divider />
       <div class="order-info-form">
-        <JtformItem
-          :label="$t('single.totalItems') + '：'"
-          :content="`${productInfo?.icon ? productInfo?.icon : ''} ${productTotalPrice}`"
-        />
-        <JtformItem
-          :label="$t('single.shippingFee') + '：'"
-          :content="`${productInfo?.icon ? productInfo?.icon : ''} 0.00`"
-        />
-        <JtformItem
-          :label="$t('single.paymentMethod') + '：'"
-          :content="$t('single.cod')"
-          style="margin-bottom: 0"
-        />
+        <JtformItem :label="$t('single.totalItems') + '：'"
+          :content="`${productInfo?.icon ? productInfo?.icon : ''} ${productTotalPrice}`" />
+        <JtformItem :label="$t('single.shippingFee') + '：'"
+          :content="`${productInfo?.icon ? productInfo?.icon : ''} 0.00`" />
+        <JtformItem :label="$t('single.paymentMethod') + '：'" :content="$t('single.cod')" style="margin-bottom: 0" />
         <Divider />
-        <JtformItem
-          :label="$t('single.amountPaid') + '：'"
-          style="margin-bottom: 0"
-        >
+        <JtformItem :label="$t('single.amountPaid') + '：'" style="margin-bottom: 0">
           <template #content>
             <span class="amount-paid">{{
               `${productInfo?.icon ? productInfo?.icon : ""} ${productTotalPrice}`
@@ -118,103 +81,43 @@
     </div>
   </div>
 
-  <div
-    class="deliver-info"
-    :class="productInfo?.status !== 0 ? '' : 'bottomnone'"
-  >
+  <div class="deliver-info" :class="productInfo?.status !== 0 ? '' : 'bottomnone'">
     <des-panel :title="$t('single.deliveryInfo')"> </des-panel>
     <div class="deliver-info-form">
       <BForm ref="deliverInfoFormRef" @submit.prevent="handleSubmit">
-        <BFormGroup
-          id="input-group-2"
-          :label="$t('single.name')"
-          label-for="input-1"
-          :class="productInfo?.checkoutConfig?.buyerName ? 'required' : ''"
-        >
-          <BFormInput
-            id="input-1"
-            :placeholder="$t('single.enterName')"
-            :required="productInfo?.checkoutConfig?.buyerName ? true : false"
-            ref="inputNameRef"
-            v-model="userInfo.userName"
-            @update:model-value="updateName"
-          />
+        <BFormGroup id="input-group-2" :label="$t('single.name')" label-for="input-1"
+          :class="productInfo?.checkoutConfig?.buyerName ? 'required' : ''">
+          <BFormInput id="input-1" :placeholder="$t('single.enterName')"
+            :required="productInfo?.checkoutConfig?.buyerName ? true : false" ref="inputNameRef"
+            v-model="userInfo.userName" @update:model-value="updateName" />
         </BFormGroup>
-        <BFormGroup
-          id="input-group-2"
-          :label="$t('single.email')"
-          label-for="input-2"
-          :class="productInfo?.checkoutConfig?.buyerEmail ? 'required' : ''"
-        >
-          <BFormInput
-            id="input-2"
-            type="email"
-            :placeholder="$t('single.enterEmail')"
-            ref="inputEmailRef"
-            :required="productInfo?.checkoutConfig?.buyerEmail ? true : false"
-            v-model="userInfo.userEmail"
-            @update:model-value="updateEmail"
-          />
+        <BFormGroup id="input-group-2" :label="$t('single.email')" label-for="input-2"
+          :class="productInfo?.checkoutConfig?.buyerEmail ? 'required' : ''">
+          <BFormInput id="input-2" type="email" :placeholder="$t('single.enterEmail')" ref="inputEmailRef"
+            :required="productInfo?.checkoutConfig?.buyerEmail ? true : false" v-model="userInfo.userEmail"
+            @update:model-value="updateEmail" />
         </BFormGroup>
-        <BFormGroup
-          id="input-group-3"
-          :label="$t('single.phone')"
-          label-for="input-3"
-          :class="productInfo?.checkoutConfig?.buyerPhone ? 'required' : ''"
-        >
-          <BFormInput
-            id="input-3"
-            :placeholder="$t('single.enterPhone')"
-            :required="productInfo?.checkoutConfig?.buyerPhone ? true : false"
-            ref="inputPhoneRef"
-            v-model="userInfo.phone"
-            @update:model-value="updatePhone"
-          />
+        <BFormGroup id="input-group-3" :label="$t('single.phone')" label-for="input-3"
+          :class="productInfo?.checkoutConfig?.buyerPhone ? 'required' : ''">
+          <BFormInput id="input-3" :placeholder="$t('single.enterPhone')"
+            :required="productInfo?.checkoutConfig?.buyerPhone ? true : false" ref="inputPhoneRef"
+            v-model="userInfo.phone" @update:model-value="updatePhone" />
         </BFormGroup>
-        <BFormGroup
-          id="input-group-5"
-          :label="$t('single.region')"
-          label-for="input-5"
-          :class="productInfo?.checkoutConfig?.buyerRegion ? 'required' : ''"
-        >
-          <BFormSelect
-            id="input-5"
-            :required="productInfo?.checkoutConfig?.buyerRegion ? true : false"
-            ref="inputProvinceRef"
-            v-model="userInfo.province"
-            @update:model-value="updateProvince"
-          >
-            <BFormSelectOption
-              v-for="province in provinceList"
-              :key="province.id"
-              :value="province.id"
-              >{{ province.regionName }}</BFormSelectOption
-            >
+        <BFormGroup id="input-group-5" :label="$t('single.region')" label-for="input-5"
+          :class="productInfo?.checkoutConfig?.buyerRegion ? 'required' : ''">
+          <BFormSelect id="input-5" :required="productInfo?.checkoutConfig?.buyerRegion ? true : false"
+            ref="inputProvinceRef" v-model="userInfo.province" @update:model-value="updateProvince">
+            <BFormSelectOption v-for="province in provinceList" :key="province.id" :value="province.id">{{
+              province.regionName }}</BFormSelectOption>
           </BFormSelect>
-          <BFormSelect
-            id="input-5"
-            :required="productInfo?.checkoutConfig?.buyerRegion ? true : false"
-            class="address-select"
-            ref="inputCityRef"
-            v-model="userInfo.city"
-            @update:model-value="updateCity"
-          >
-            <BFormSelectOption
-              v-for="province in cityList"
-              :key="province.id"
-              :value="province.id"
-              >{{ province.regionName }}</BFormSelectOption
-            >
+          <BFormSelect id="input-5" class="address-select" ref="inputCityRef" v-model="userInfo.city">
+            <BFormSelectOption v-for="province in cityList" :key="province.id" :value="province.id">{{
+              province.regionName
+            }}</BFormSelectOption>
           </BFormSelect>
         </BFormGroup>
-        <BFormGroup
-          id="input-group-4"
-          :label="$t('single.postcode')"
-          label-for="input-4"
-          :class="
-            productInfo?.checkoutConfig?.buyerPostalCode ? 'required' : ''
-          "
-        >
+        <BFormGroup id="input-group-4" :label="$t('single.postcode')" label-for="input-4" :class="productInfo?.checkoutConfig?.buyerPostalCode ? 'required' : ''
+          ">
           <!-- <BFormInput
             id="input-4"
             :placeholder="$t('single.enterPostcode')"
@@ -225,69 +128,29 @@
             v-model="userInfo.postCode"
             @update:model-value="updatePostCode"
           /> -->
-          <BFormSelect
-            id="input-4"
-            :required="
-              productInfo?.checkoutConfig?.buyerPostalCode ? true : false
-            "
-            ref="inputPostCodeRef"
-            v-model="userInfo.postCode"
-            @update:model-value="updatePostCode"
-          >
-            <BFormSelectOption
-              v-for="code in postCodeList"
-              :key="code"
-              :value="code"
-              >{{ code }}</BFormSelectOption
-            >
+          <BFormSelect id="input-4" :required="productInfo?.checkoutConfig?.buyerPostalCode ? true : false
+            " ref="inputPostCodeRef" v-model="userInfo.postCode" @update:model-value="updatePostCode">
+            <BFormSelectOption v-for="code in postCodeList" :key="code" :value="code">{{ code }}</BFormSelectOption>
           </BFormSelect>
         </BFormGroup>
-        <BFormGroup
-          id="input-group-6"
-          :label="$t('single.address')"
-          label-for="input-6"
-          :class="productInfo?.checkoutConfig?.buyerAddress ? 'required' : ''"
-        >
-          <BFormTextarea
-            id="input-6"
-            :placeholder="$t('single.enterAddress')"
-            rows="3"
-            :required="productInfo?.checkoutConfig?.buyerAddress ? true : false"
-            ref="inputAddressRef"
-            v-model="userInfo.address"
-            @update:model-value="updateAddress"
-          />
+        <BFormGroup id="input-group-6" :label="$t('single.address')" label-for="input-6"
+          :class="productInfo?.checkoutConfig?.buyerAddress ? 'required' : ''">
+          <BFormTextarea id="input-6" :placeholder="$t('single.enterAddress')" rows="3"
+            :required="productInfo?.checkoutConfig?.buyerAddress ? true : false" ref="inputAddressRef"
+            v-model="userInfo.address" @update:model-value="updateAddress" />
         </BFormGroup>
-        <BFormGroup
-          id="input-group-7"
-          :label="$t('single.message')"
-          label-for="input-7"
-          :class="productInfo?.checkoutConfig?.buyerRemark ? 'required' : ''"
-        >
-          <BFormTextarea
-            id="input-7"
-            :placeholder="$t('single.enterMessage')"
-            rows="3"
-            :required="productInfo?.checkoutConfig?.buyerRemark ? true : false"
-            ref="inputRemarkRef"
-            v-model="userInfo.remark"
-            @update:model-value="updateRemark"
-          />
+        <BFormGroup id="input-group-7" :label="$t('single.message')" label-for="input-7"
+          :class="productInfo?.checkoutConfig?.buyerRemark ? 'required' : ''">
+          <BFormTextarea id="input-7" :placeholder="$t('single.enterMessage')" rows="3"
+            :required="productInfo?.checkoutConfig?.buyerRemark ? true : false" ref="inputRemarkRef"
+            v-model="userInfo.remark" @update:model-value="updateRemark" />
         </BFormGroup>
       </BForm>
     </div>
   </div>
 
-  <div
-    class="jtmall-btn-group"
-    :class="show ? 'disabled' : ''"
-    v-if="productInfo?.status !== 0"
-  >
-    <div
-      class="orderQuery"
-      @click="queryOrder"
-      v-if="productInfo?.orderNum && productInfo?.orderNum > 0"
-    >
+  <div class="jtmall-btn-group" :class="show ? 'disabled' : ''" v-if="productInfo?.status !== 0">
+    <div class="orderQuery" @click="queryOrder" v-if="productInfo?.orderNum && productInfo?.orderNum > 0">
       {{ $t("single.orderQuery") }}
     </div>
     <div class="buyNow" @click="onSubmit" type="submit">
@@ -295,9 +158,7 @@
     </div>
   </div>
   <Teleport to="body">
-    <div
-      class="top-0 start-50 translate-middle-x toast-container position-fixed p-3"
-    >
+    <div class="top-0 start-50 translate-middle-x toast-container position-fixed p-3">
       <BToast v-model="showTip">
         {{ tipMsg }}
       </BToast>
@@ -338,12 +199,12 @@ const amount = ref(1);
 const productTotalPrice = computed(() => {
   return currentSku.value
     ? math.format(
-        math.multiply(
-          math.bignumber(amount.value),
-          math.bignumber(currentSku.value.price),
-        ),
-        { notation: "fixed", precision: 2 },
-      )
+      math.multiply(
+        math.bignumber(amount.value),
+        math.bignumber(currentSku.value.price),
+      ),
+      { notation: "fixed", precision: 2 },
+    )
     : "0.00";
 });
 const currentSku = ref(null as any);
@@ -649,7 +510,7 @@ const inputEmailRef = ref();
 const inputPhoneRef = ref();
 const inputPostCodeRef = ref();
 const inputProvinceRef = ref();
-const inputCityRef = ref();
+// const inputCityRef = ref();
 const inputAddressRef = ref();
 const inputRemarkRef = ref();
 const showTip = ref(false);
@@ -872,10 +733,10 @@ const updateProvince = ($event: any) => {
   // valideProvince($event);
   inputProvinceRef.value.element.reportValidity();
 };
-const updateCity = ($event: any) => {
-  // valideCity($event);
-  inputCityRef.value.element.reportValidity();
-};
+// const updateCity = ($event: any) => {
+//   // valideCity($event);
+//   inputCityRef.value.element.reportValidity();
+// };
 const updateAddress = ($event: any) => {
   valideAddress($event);
   inputAddressRef.value.element.reportValidity();
