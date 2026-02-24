@@ -1,14 +1,24 @@
 <template>
   <ClientOnly>
-    <JtSwipper v-if="images.length" ref="jtSwipperRef" :sources="images" @sliderMove="sliderMove"></JtSwipper>
+    <JtSwipper
+      v-if="images.length"
+      ref="jtSwipperRef"
+      :sources="images"
+      @sliderMove="sliderMove"
+    ></JtSwipper>
   </ClientOnly>
 
   <div class="sec-content">
     <div class="jt-scroll-img">
       <div class="img-content">
-        <div class="img-item" v-for="(item, index) in scrollImages" @click="clickImg(item, item.realIndex)"
-          :class="currentImg?.sindex === item.sindex ? 'actived' : ''" :key="item.realIndex"
-          :id="`img-item${item.realIndex}`">
+        <div
+          class="img-item"
+          v-for="(item, index) in scrollImages"
+          @click="clickImg(item, item.realIndex)"
+          :class="currentImg?.sindex === item.sindex ? 'actived' : ''"
+          :key="item.realIndex"
+          :id="`img-item${item.realIndex}`"
+        >
           <img :src="item.src" alt="" />
         </div>
       </div>
@@ -16,13 +26,18 @@
     <div class="product-title">{{ productInfo?.title }}</div>
     <div class="sales-price">
       <span>
-        <span class="now-price">{{ productInfo?.icon ? productInfo?.icon : "" }}
-          {{ currentSku?.price || 0.0 }}</span>
-        <span class="old-price" v-show="currentSku?.originalPrice">{{ productInfo?.icon ? productInfo?.icon : "" }}
-          {{ currentSku?.originalPrice || 0.0 }}</span>
+        <span class="now-price"
+          >{{ productInfo?.icon ? productInfo?.icon : "" }}
+          {{ currentSku?.price || 0.0 }}</span
+        >
+        <span class="old-price" v-show="currentSku?.originalPrice"
+          >{{ productInfo?.icon ? productInfo?.icon : "" }}
+          {{ currentSku?.originalPrice || 0.0 }}</span
+        >
       </span>
-      <span class="sales" v-show="currentSku?.virtualSales">{{ $t("single.sales") }} {{ currentSku?.virtualSales
-      }}</span>
+      <span class="sales" v-show="currentSku?.virtualSales"
+        >{{ $t("single.sales") }} {{ currentSku?.virtualSales }}</span
+      >
     </div>
     <div class="sec-icon">
       <img alt="" src="assets/svg/car.svg" />
@@ -42,35 +57,64 @@
   <div class="order-confirm">
     <des-panel :title="$t('single.confirmOrder')"> </des-panel>
     <div class="order-info">
-      <div v-for="sku in attrDefinitions">
+      <div v-for="(sku, index) in attrDefinitions">
         <div class="product-spec">
-          <span class="product-spec-label" v-show="sku.name">{{ sku.name }}：</span>
+          <span class="product-spec-label" v-show="sku.name"
+            >{{ sku.name }}：</span
+          >
           <span class="product-spec-name">{{
             currentSku?.attrValues[sku.name]
           }}</span>
         </div>
-        <div class="product-spec-radioGroup" v-if="sku.values && sku.values.length">
-          <div class="product-spec-radio" :class="currentSku?.attrValues[sku.name] === value ? 'active' : ''"
-            v-for="value in sku.values" :key="value" @click="changeSku(sku, value)">
+        <div
+          class="product-spec-radioGroup"
+          v-if="sku.values && sku.values.length"
+        >
+          <div
+            class="product-spec-radio"
+            :class="currentSku?.attrValues[sku.name] === value ? 'active' : ''"
+            v-for="value in sku.values"
+            :key="value"
+            @click="changeSku(sku, value, $event)"
+          >
+            <div
+              style="width: 100px; height: 100px"
+              class="sku-img"
+              v-if="index === 0 && skuImg(sku.name, value)"
+            >
+              <img :src="skuImg(sku.name, value)" alt="" />
+            </div>
             {{ value }}
           </div>
         </div>
       </div>
       <BFormGroup :label="$t('single.quantity')">
         <BFormSpinbutton inline min="1" max="999" v-model="amount" />
-        <span class="jtmall-inventory" v-show="currentSku?.stock">{{ $t("single.inventory") }}
+        <span class="jtmall-inventory" v-show="currentSku?.stock"
+          >{{ $t("single.inventory") }}
           <span style="margin-left: 4px">{{ currentSku?.stock }}</span>
         </span>
       </BFormGroup>
       <Divider />
       <div class="order-info-form">
-        <JtformItem :label="$t('single.totalItems') + '：'"
-          :content="`${productInfo?.icon ? productInfo?.icon : ''} ${productTotalPrice}`" />
-        <JtformItem :label="$t('single.shippingFee') + '：'"
-          :content="`${productInfo?.icon ? productInfo?.icon : ''} 0.00`" />
-        <JtformItem :label="$t('single.paymentMethod') + '：'" :content="$t('single.cod')" style="margin-bottom: 0" />
+        <JtformItem
+          :label="$t('single.totalItems') + '：'"
+          :content="`${productInfo?.icon ? productInfo?.icon : ''} ${productTotalPrice}`"
+        />
+        <JtformItem
+          :label="$t('single.shippingFee') + '：'"
+          :content="`${productInfo?.icon ? productInfo?.icon : ''} 0.00`"
+        />
+        <JtformItem
+          :label="$t('single.paymentMethod') + '：'"
+          :content="$t('single.cod')"
+          style="margin-bottom: 0"
+        />
         <Divider />
-        <JtformItem :label="$t('single.amountPaid') + '：'" style="margin-bottom: 0">
+        <JtformItem
+          :label="$t('single.amountPaid') + '：'"
+          style="margin-bottom: 0"
+        >
           <template #content>
             <span class="amount-paid">{{
               `${productInfo?.icon ? productInfo?.icon : ""} ${productTotalPrice}`
@@ -81,76 +125,194 @@
     </div>
   </div>
 
-  <div class="deliver-info" :class="productInfo?.status !== 0 ? '' : 'bottomnone'">
+  <div
+    class="deliver-info"
+    :class="productInfo?.status !== 0 ? '' : 'bottomnone'"
+  >
     <des-panel :title="$t('single.deliveryInfo')"> </des-panel>
     <div class="deliver-info-form">
       <BForm ref="deliverInfoFormRef" @submit.prevent="handleSubmit">
-        <BFormGroup id="input-group-2" :label="$t('single.name')" label-for="input-1"
-          :class="productInfo?.checkoutConfig?.buyerName ? 'required' : ''">
-          <BFormInput id="input-1" :placeholder="$t('single.enterName')"
-            :required="productInfo?.checkoutConfig?.buyerName ? true : false" ref="inputNameRef"
-            v-model="userInfo.userName" @update:model-value="updateName" />
+        <BFormGroup
+          id="input-group-2"
+          :label="$t('single.name')"
+          label-for="input-1"
+          :class="productInfo?.checkoutConfig?.buyerName ? 'required' : ''"
+        >
+          <BFormInput
+            id="input-1"
+            :placeholder="$t('single.enterName')"
+            :required="productInfo?.checkoutConfig?.buyerName ? true : false"
+            ref="inputNameRef"
+            v-model="userInfo.userName"
+            @update:model-value="updateName"
+          />
         </BFormGroup>
-        <BFormGroup id="input-group-2" :label="$t('single.email')" label-for="input-2"
-          :class="productInfo?.checkoutConfig?.buyerEmail ? 'required' : ''">
-          <BFormInput id="input-2" type="email" :placeholder="$t('single.enterEmail')" ref="inputEmailRef"
-            :required="productInfo?.checkoutConfig?.buyerEmail ? true : false" v-model="userInfo.userEmail"
-            @update:model-value="updateEmail" />
+        <BFormGroup
+          id="input-group-2"
+          :label="$t('single.email')"
+          label-for="input-2"
+          :class="productInfo?.checkoutConfig?.buyerEmail ? 'required' : ''"
+        >
+          <BFormInput
+            id="input-2"
+            type="email"
+            :placeholder="$t('single.enterEmail')"
+            ref="inputEmailRef"
+            :required="productInfo?.checkoutConfig?.buyerEmail ? true : false"
+            v-model="userInfo.userEmail"
+            @update:model-value="updateEmail"
+          />
         </BFormGroup>
-        <BFormGroup id="input-group-3" :label="$t('single.phone')" label-for="input-3"
-          :class="productInfo?.checkoutConfig?.buyerPhone ? 'required' : ''">
-          <BFormInput id="input-3" :placeholder="$t('single.enterPhone')"
-            :required="productInfo?.checkoutConfig?.buyerPhone ? true : false" ref="inputPhoneRef"
-            v-model="userInfo.phone" @update:model-value="updatePhone" />
+        <BFormGroup
+          id="input-group-3"
+          :label="$t('single.phone')"
+          label-for="input-3"
+          :class="productInfo?.checkoutConfig?.buyerPhone ? 'required' : ''"
+        >
+          <BFormInput
+            id="input-3"
+            :placeholder="$t('single.enterPhone')"
+            :required="productInfo?.checkoutConfig?.buyerPhone ? true : false"
+            ref="inputPhoneRef"
+            v-model="userInfo.phone"
+            @update:model-value="updatePhone"
+          />
         </BFormGroup>
-        <BFormGroup id="input-group-5" :label="$t('single.region')" label-for="input-5"
-          :class="productInfo?.checkoutConfig?.buyerRegion ? 'required' : ''">
-          <BFormSelect id="input-5" :required="productInfo?.checkoutConfig?.buyerRegion ? true : false"
-            ref="inputProvinceRef" v-model="userInfo.province" @update:model-value="updateProvince">
-            <BFormSelectOption v-for="province in provinceList" :key="province.id" :value="province.id">{{
-              province.regionName }}</BFormSelectOption>
+        <BFormGroup
+          id="input-group-5"
+          :label="$t('single.region')"
+          label-for="input-5"
+          :class="productInfo?.checkoutConfig?.buyerRegion ? 'required' : ''"
+        >
+          <BFormSelect
+            id="input-5"
+            :required="productInfo?.checkoutConfig?.buyerRegion ? true : false"
+            ref="inputProvinceRef"
+            v-model="userInfo.province"
+            @update:model-value="updateProvince"
+          >
+            <BFormSelectOption
+              v-for="province in provinceList"
+              :key="province.id"
+              :value="province.id"
+              >{{ province.regionName }}</BFormSelectOption
+            >
           </BFormSelect>
-          <BFormSelect id="input-5" class="address-select" ref="inputCityRef" v-model="userInfo.city">
-            <BFormSelectOption v-for="province in cityList" :key="province.id" :value="province.id">{{
-              province.regionName
-            }}</BFormSelectOption>
+          <BFormSelect
+            id="input-5"
+            class="address-select"
+            ref="inputCityRef"
+            v-model="userInfo.city"
+          >
+            <BFormSelectOption
+              v-for="province in cityList"
+              :key="province.id"
+              :value="province.id"
+              >{{ province.regionName }}</BFormSelectOption
+            >
           </BFormSelect>
         </BFormGroup>
-        <BFormGroup id="input-group-4" :label="$t('single.postcode')" label-for="input-4" :class="productInfo?.checkoutConfig?.buyerPostalCode ? 'required' : ''
-          ">
-          <!-- <BFormInput
-            id="input-4"
-            :placeholder="$t('single.enterPostcode')"
-            :required="
-              productInfo?.checkoutConfig?.buyerPostalCode ? true : false
-            "
-            ref="inputPostCodeRef"
-            v-model="userInfo.postCode"
-            @update:model-value="updatePostCode"
-          /> -->
-          <BFormSelect id="input-4" :required="productInfo?.checkoutConfig?.buyerPostalCode ? true : false
-            " ref="inputPostCodeRef" v-model="userInfo.postCode" @update:model-value="updatePostCode">
-            <BFormSelectOption v-for="code in postCodeList" :key="code" :value="code">{{ code }}</BFormSelectOption>
-          </BFormSelect>
+        <BFormGroup
+          id="input-group-4"
+          :label="$t('single.postcode')"
+          label-for="input-4"
+          :class="
+            productInfo?.checkoutConfig?.buyerPostalCode ? 'required' : ''
+          "
+        >
+          <div
+            class="position-relative postcode-input-wrapper"
+            ref="postCodeWrapperRef"
+          >
+            <BFormInput
+              id="input-4"
+              :placeholder="$t('single.enterPostcode')"
+              :required="
+                productInfo?.checkoutConfig?.buyerPostalCode ? true : false
+              "
+              ref="inputPostCodeRef"
+              v-model="userInfo.postCode"
+              @update:model-value="updatePostCode"
+              @focus="showPostCodeSuggestions = true"
+              @blur="onPostCodeBlur"
+              autocomplete="off"
+            />
+            <!-- 下拉箭头区域 -->
+            <div
+              class="position-absolute end-0 top-50 translate-middle-y pe-3"
+              style="cursor: pointer; z-index: 10"
+              @mousedown.prevent="togglePostCodeDropdown"
+            >
+              <div
+                class="jt-dropdown-arrow"
+                :class="{ 'arrow-up': showPostCodeSuggestions }"
+              ></div>
+            </div>
+
+            <!-- 下拉选项列表 -->
+            <Transition name="jt-dropdown">
+              <div
+                v-show="showPostCodeSuggestions && postCodeList.length > 0"
+                class="jt-custom-dropdown-menu"
+              >
+                <div
+                  v-for="code in postCodeList"
+                  :key="code"
+                  class="jt-custom-dropdown-item"
+                  @mousedown.prevent="selectPostCode(code)"
+                >
+                  {{ code }}
+                </div>
+              </div>
+            </Transition>
+          </div>
         </BFormGroup>
-        <BFormGroup id="input-group-6" :label="$t('single.address')" label-for="input-6"
-          :class="productInfo?.checkoutConfig?.buyerAddress ? 'required' : ''">
-          <BFormTextarea id="input-6" :placeholder="$t('single.enterAddress')" rows="3"
-            :required="productInfo?.checkoutConfig?.buyerAddress ? true : false" ref="inputAddressRef"
-            v-model="userInfo.address" @update:model-value="updateAddress" />
+        <BFormGroup
+          id="input-group-6"
+          :label="$t('single.address')"
+          label-for="input-6"
+          :class="productInfo?.checkoutConfig?.buyerAddress ? 'required' : ''"
+        >
+          <BFormTextarea
+            id="input-6"
+            :placeholder="$t('single.enterAddress')"
+            rows="3"
+            :required="productInfo?.checkoutConfig?.buyerAddress ? true : false"
+            ref="inputAddressRef"
+            v-model="userInfo.address"
+            @update:model-value="updateAddress"
+          />
         </BFormGroup>
-        <BFormGroup id="input-group-7" :label="$t('single.message')" label-for="input-7"
-          :class="productInfo?.checkoutConfig?.buyerRemark ? 'required' : ''">
-          <BFormTextarea id="input-7" :placeholder="$t('single.enterMessage')" rows="3"
-            :required="productInfo?.checkoutConfig?.buyerRemark ? true : false" ref="inputRemarkRef"
-            v-model="userInfo.remark" @update:model-value="updateRemark" />
+        <BFormGroup
+          id="input-group-7"
+          :label="$t('single.message')"
+          label-for="input-7"
+          :class="productInfo?.checkoutConfig?.buyerRemark ? 'required' : ''"
+        >
+          <BFormTextarea
+            id="input-7"
+            :placeholder="$t('single.enterMessage')"
+            rows="3"
+            :required="productInfo?.checkoutConfig?.buyerRemark ? true : false"
+            ref="inputRemarkRef"
+            v-model="userInfo.remark"
+            @update:model-value="updateRemark"
+          />
         </BFormGroup>
       </BForm>
     </div>
   </div>
 
-  <div class="jtmall-btn-group" :class="show ? 'disabled' : ''" v-if="productInfo?.status !== 0">
-    <div class="orderQuery" @click="queryOrder" v-if="productInfo?.orderNum && productInfo?.orderNum > 0">
+  <div
+    class="jtmall-btn-group"
+    :class="show ? 'disabled' : ''"
+    v-if="productInfo?.status !== 0"
+  >
+    <div
+      class="orderQuery"
+      @click="queryOrder"
+      v-if="productInfo?.orderNum && productInfo?.orderNum > 0"
+    >
       {{ $t("single.orderQuery") }}
     </div>
     <div class="buyNow" @click="onSubmit" type="submit">
@@ -158,7 +320,9 @@
     </div>
   </div>
   <Teleport to="body">
-    <div class="top-0 start-50 translate-middle-x toast-container position-fixed p-3">
+    <div
+      class="top-0 start-50 translate-middle-x toast-container position-fixed p-3"
+    >
       <BToast v-model="showTip">
         {{ tipMsg }}
       </BToast>
@@ -195,16 +359,38 @@ const currentImg = ref<any>({
 const attrDefinitions = computed(() => {
   return productInfo.value?.attrDefinitions || [];
 });
+const skuImg = computed(() => {
+  return (category: string, targetValue: string) => {
+    if (!productInfo.value?.skus || !currentSku.value) return "";
+
+    const targetSku = productInfo.value.skus.find((item: any) => {
+      // 1. 目标属性名 category 对应的属性值必须是 targetValue
+      if (item.attrValues[category] !== targetValue) return false;
+
+      // 2. 除了 category 以外，其他的属性值必须跟当前选中的 currentSku 一致
+      for (const key in currentSku.value.attrValues) {
+        if (key !== category) {
+          if (item.attrValues[key] !== currentSku.value.attrValues[key]) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+
+    return targetSku?.imageUrl ? getRealImgUrl(targetSku.imageUrl) : "";
+  };
+});
 const amount = ref(1);
 const productTotalPrice = computed(() => {
   return currentSku.value
     ? math.format(
-      math.multiply(
-        math.bignumber(amount.value),
-        math.bignumber(currentSku.value.price),
-      ),
-      { notation: "fixed", precision: 2 },
-    )
+        math.multiply(
+          math.bignumber(amount.value),
+          math.bignumber(currentSku.value.price),
+        ),
+        { notation: "fixed", precision: 2 },
+      )
     : "0.00";
 });
 const currentSku = ref(null as any);
@@ -416,7 +602,7 @@ const fetchData = async () => {
       const mainImages = product.data.images.map(
         (item: any, index: number) => ({
           src: item.url,
-          sindex: 0,
+          sindex: index,
           realIndex: index,
           id: item.id,
           type: "image",
@@ -425,8 +611,8 @@ const fetchData = async () => {
       if (product.data.videoUrl) {
         let videoObj = {
           src: getRealImgUrl(product.data.videoUrl),
-          sindex: 0,
-          realIndex: mainImages.length + 1,
+          sindex: mainImages.length,
+          realIndex: mainImages.length,
           id: product.data.videoUrl,
           type: "video",
         };
@@ -434,23 +620,9 @@ const fetchData = async () => {
       }
       let computedImages = [];
       let computedScrollImages = [];
-      if (product.data.skus && product.data.skus.length > 0) {
-        const skuImages = product.data.skus
-          .filter((ctem: any) => ctem.imageUrl && ctem.isDisplay)
-          .map((item: any, index: number) => ({
-            src: getRealImgUrl(item.imageUrl),
-            sindex: index + 1,
-            realIndex: mainImages.length + index,
-            id: item.id,
-            type: "image",
-          }));
-        computedImages = [...mainImages, ...skuImages];
-        computedScrollImages = [mainImages[0], ...skuImages];
-      } else {
-        computedImages = [...mainImages];
-        computedScrollImages = [mainImages[0]];
-      }
 
+      computedImages = [...mainImages];
+      computedScrollImages = [...mainImages];
       images.value = computedImages;
       scrollImages.value = computedScrollImages;
       if (images.value.length > 0) {
@@ -486,22 +658,22 @@ const sliderMove = (swiper: any) => {
 /**
  * 选择规格
  */
-const changeSku = (sku: any, value: string) => {
+const changeSku = (sku: any, value: string, event?: any) => {
   if (!currentSku.value) return;
+  if (event?.currentTarget) {
+    event.currentTarget.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }
+
   let attrValues = JSON.parse(JSON.stringify(currentSku.value.attrValues));
   attrValues[sku.name] = value;
   let obj = productInfo.value?.skus
     .filter((ctem: any) => ctem.isDisplay)
     .find((item: any) => isSimpleObjectEqual(item.attrValues, attrValues));
   currentSku.value = obj ? obj : currentSku.value;
-  //选择规格定位图片，目前会滚动上去
-  // let img = scrollImages.value.find(
-  //   (item: any) => item.id === currentSku.value?.id,
-  // );
-  // if (img) {
-  //   currentImg.value = img;
-  //   jtSwipperRef.value.clickSwiper(img, img.realIndex);
-  // }
 };
 
 const deliverInfoFormRef = ref();
@@ -513,12 +685,16 @@ const inputProvinceRef = ref();
 // const inputCityRef = ref();
 const inputAddressRef = ref();
 const inputRemarkRef = ref();
+const postCodeWrapperRef = ref();
+const showPostCodeSuggestions = ref(false);
 const showTip = ref(false);
 const tipMsg = ref("");
 /**
  * 提交数据
  */
 const onSubmit = async () => {
+  console.log(userInfo.value, "userInfo.value");
+
   if (show.value) return;
   // 提交表单-确认订单不在可视窗口上方的时候定位上去
   const orderConfirm = document.querySelector(".order-confirm");
@@ -794,8 +970,103 @@ const scrollImg = (item: any) => {
 const queryOrder = () => {
   router.push("/query");
 };
+
+const togglePostCodeDropdown = (e: any) => {
+  if (showPostCodeSuggestions.value) {
+    showPostCodeSuggestions.value = false;
+  } else {
+    showPostCodeSuggestions.value = true;
+    inputPostCodeRef.value?.element?.focus();
+  }
+};
+
+const onPostCodeBlur = () => {
+  // 延时关闭以允许 mousedown 事件先执行
+  setTimeout(() => {
+    showPostCodeSuggestions.value = false;
+  }, 200);
+};
+
+const selectPostCode = (code: string) => {
+  userInfo.value.postCode = code;
+  updatePostCode(code);
+  showPostCodeSuggestions.value = false;
+};
 </script>
 
 <style scoped lang="less">
 @import "~/assets/less/single.less";
+
+.jt-dropdown-arrow {
+  width: 0;
+  height: 0;
+  margin-left: 0.255em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0.3em solid;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+  color: #6c757d;
+  transition: transform 0.2s ease-in-out;
+
+  &.arrow-up {
+    transform: rotate(180deg);
+  }
+}
+
+.jt-custom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px); // 增加一点间距，像悬浮层一样
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px; // 更圆润的边角
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); // 更柔和的阴影
+  z-index: 1050;
+  padding: 4px 0; // 内部留白
+}
+
+.jt-custom-dropdown-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.1s;
+  color: #333;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #f0f2f5;
+    color: #007bff; // 悬浮时变色
+  }
+
+  &:active {
+    background-color: #e6e9ed;
+  }
+}
+
+// 动画效果
+.jt-dropdown-enter-active,
+.jt-dropdown-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top center;
+}
+
+.jt-dropdown-enter-from,
+.jt-dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scaleY(0.95);
+}
+
+.postcode-input-wrapper {
+  .form-control {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1);
+    }
+  }
+}
 </style>
