@@ -693,8 +693,6 @@ const tipMsg = ref("");
  * 提交数据
  */
 const onSubmit = async () => {
-  console.log(userInfo.value, "userInfo.value");
-
   if (show.value) return;
   // 提交表单-确认订单不在可视窗口上方的时候定位上去
   const orderConfirm = document.querySelector(".order-confirm");
@@ -991,6 +989,7 @@ const selectPostCode = (code: string) => {
   userInfo.value.postCode = code;
   updatePostCode(code);
   showPostCodeSuggestions.value = false;
+  inputPostCodeRef?.value?.blur();
 };
 </script>
 
