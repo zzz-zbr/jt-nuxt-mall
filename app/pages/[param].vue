@@ -589,7 +589,7 @@ const fetchData = async () => {
       if (product.data.status === 0) {
         showTip.value = true;
         tipMsg.value = t("single.productUnavailable");
-        return;
+        // return;
       }
       // 初始化 Facebook Pixel（异步但不阻塞）
       initMetaPinxel(product.data.fbPixelIds);
