@@ -19,7 +19,7 @@
           :key="item.realIndex"
           :id="`img-item${item.realIndex}`"
         >
-          <img :src="item.src" alt="" />
+          <img :src="item.imgSrc" alt="" />
         </div>
       </div>
     </div>
@@ -339,6 +339,7 @@ import {
   getRealImgUrl,
   isSimpleObjectEqual,
   handleTree,
+  extractFirstFrame,
 } from "../utils";
 import * as math from "mathjs";
 const router = useRouter();
@@ -601,6 +602,7 @@ const fetchData = async () => {
       }
       const mainImages = product.data.images.map(
         (item: any, index: number) => ({
+          imgSrc: item.url,
           src: item.url,
           sindex: index,
           realIndex: index,
@@ -610,6 +612,7 @@ const fetchData = async () => {
       );
       if (product.data.videoUrl) {
         let videoObj = {
+          imgSrc: await extractFirstFrame(getRealImgUrl(product.data.videoUrl)),
           src: getRealImgUrl(product.data.videoUrl),
           sindex: mainImages.length,
           realIndex: mainImages.length,
