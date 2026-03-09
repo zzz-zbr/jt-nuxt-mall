@@ -99,8 +99,6 @@ const formatTime = (timeStr: string) => {
   if (isNaN(orderTimeMs)) return timeStr;
 
   const nowMs = new Date().getTime();
-  console.log(nowMs, "本地时间");
-
   const diffMs = nowMs - orderTimeMs;
 
   const oneHour = 3600000;
