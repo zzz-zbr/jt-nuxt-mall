@@ -58,5 +58,11 @@ export default {
     selectCity: "請選擇市",
     invalidAddress: "請輸入詳細地址",
     invalidMessage: "請輸入留言",
+    productReviews: "商品評論",
+    recentOrders: "最近下單",
+    justBought: "剛剛購買",
+    hoursAgo: "1小時前",
+    threeHoursAgo: "3小時前",
+    daysAgo: "昨天",
   },
 };

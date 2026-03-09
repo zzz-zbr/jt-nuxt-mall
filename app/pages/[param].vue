@@ -48,7 +48,13 @@
       <span class="tip">{{ $t("single.freeShipping") }}</span>
     </div>
   </div>
+  <!-- 虚拟订单 -->
+  <JtRecentOrders
+    :orders="productInfo?.orderList || productInfo?.orders || []"
+    v-if="productInfo?.status !== 0"
+  />
 
+  <!-- 商品详情 -->
   <div class="detail-content">
     <des-panel :title="$t('single.productDetail')"> </des-panel>
     <div class="product-json" v-html="processedProductDetail"></div>
@@ -124,10 +130,15 @@
       </div>
     </div>
   </div>
-
+  <!-- 订单信息 -->
   <div
     class="deliver-info"
-    :class="productInfo?.status !== 0 ? '' : 'bottomnone'"
+    :class="
+      productInfo?.status === 0 ||
+      (productInfo?.commentList && productInfo?.commentList.length > 0)
+        ? 'bottomnone'
+        : ''
+    "
   >
     <des-panel :title="$t('single.deliveryInfo')"> </des-panel>
     <div class="deliver-info-form">
@@ -302,7 +313,10 @@
       </BForm>
     </div>
   </div>
+  <!-- 商品评论 -->
+  <JtProductComments :comments="productInfo?.commentList || []" />
 
+  <!-- 底部按钮 -->
   <div
     class="jtmall-btn-group"
     :class="show ? 'disabled' : ''"
@@ -592,6 +606,79 @@ const fetchData = async () => {
         tipMsg.value = t("single.productUnavailable");
         // return;
       }
+      // 注入虚拟评论数据用于样式开发验证
+      if (!product.data.commentList || product.data.commentList.length === 0) {
+        product.data.commentList = [
+          {
+            userName: "Anson111",
+            starLevel: 5,
+            commentTime: "2026-03-03 12:00:00",
+            content: "这个商品非常好，物美价廉",
+            images: [],
+          },
+          {
+            userName: "SarahW222",
+            starLevel: 4,
+            commentTime: "2026-03-04 10:30:00",
+            content: "这个商品非常好，物美价廉，物流也很快，包装严实。",
+            images: [
+              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
+            ],
+          },
+          {
+            userName: "JamesBond333",
+            starLevel: 5,
+            commentTime: "2026-03-05 09:00:00",
+            content:
+              "Very good product, highly recommend! 这个商品非常好，物美价廉，物美价廉，物美价廉。",
+            images: [
+              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
+            ],
+          },
+          {
+            userName: "Mokkey444",
+            starLevel: 3,
+            commentTime: "2026-03-06 15:20:00",
+            content: "还行吧，主要是配送快。",
+            images: [],
+          },
+          {
+            userName: "Anson",
+            starLevel: 5,
+            commentTime: "2026-03-03 12:00:00",
+            content: "这个商品非常好，物美价廉",
+            images: [],
+          },
+          {
+            userName: "SarahW",
+            starLevel: 4,
+            commentTime: "2026-03-04 10:30:00",
+            content: "这个商品非常好，物美价廉，物流也很快，包装严实。",
+            images: [
+              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
+            ],
+          },
+          {
+            userName: "JamesBond",
+            starLevel: 5,
+            commentTime: "2026-03-05 09:00:00",
+            content:
+              "Very good product, highly recommend! 这个商品非常好，物美价廉，物美价廉，物美价廉。",
+            images: [
+              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
+              "https://p9-xtjj-sign.byteimg.com/tos-cn-i-73owjymdk6/7d12f7153c294c22acc5b839fa5ca593~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAg5oqA5pyv54is54is6Jm-:q75.awebp?rk3s=f64ab15b&x-expires=1772923874&x-signature=zZFTvRJ0%2BfPidnSHE1lofNCsKHk%3D",
+            ],
+          },
+          {
+            userName: "Mokkey",
+            starLevel: 3,
+            commentTime: "2026-03-06 15:20:00",
+            content: "还行吧，主要是配送快。",
+            images: [],
+          },
+        ];
+      }
+
       // 初始化 Facebook Pixel（异步但不阻塞）
       initMetaPinxel(product.data.fbPixelIds);
       productDetail.value = product.data.productDetail || null;
@@ -632,11 +719,33 @@ const fetchData = async () => {
         currentImg.value = images.value[0];
       }
       findSku();
+      // 获取虚拟订单数据
+      fetchVirtualOrders();
     } else {
       router.push("/error");
     }
   } catch (e) {
     console.error("Unexpected error in fetchData:", e);
+  }
+};
+
+/**
+ * 获取虚拟订单数据
+ */
+const fetchVirtualOrders = async () => {
+  if (!productInfo.value?.id || !ipInfo.value?.timezone) return;
+  try {
+    const res = (await $fetch(
+      `${apiBase}api/virtual/orderList?productId=${productInfo.value.id}&timezone=${ipInfo.value.timezone}`,
+    ).catch((e) => {
+      console.error("Virtual orders fetch failed:", e);
+      return { data: [] };
+    })) as any;
+    if (res.code === 200 && res.data) {
+      productInfo.value.orderList = res.data;
+    }
+  } catch (e) {
+    console.error("Unexpected error in fetchVirtualOrders:", e);
   }
 };
 

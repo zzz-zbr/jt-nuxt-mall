@@ -32,7 +32,8 @@ function debounce<T extends (...args: any[]) => any>(
  */
 function getRealImgUrl(url: string) {
   if (!url) return "";
-  return url.split("#ossid#").length ? url.split("#ossid#")[1] : url;
+  const parts = url.split("#ossid#");
+  return parts.length > 1 ? parts[1] : parts[0];
 }
 
 /**
