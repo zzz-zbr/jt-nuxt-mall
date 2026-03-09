@@ -156,7 +156,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  //   if (rafId) cancelAnimationFrame(rafId);
+  if (rafId) cancelAnimationFrame(rafId);
 });
 </script>
 
@@ -165,7 +165,7 @@ onBeforeUnmount(() => {
   background: #fff;
   margin-top: 10px;
   padding: 0 0 15px 0;
-  max-height: 150px;
+  max-height: 110px;
   overflow: hidden;
 }
 
