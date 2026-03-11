@@ -88,7 +88,7 @@ const maskName = (name: string) => {
 const parseSpec = (item: any) => {
   if (!item) return "";
   if (item.sysProductSku && item.sysProductSku.attrValues) {
-    return Object.values(item.sysProductSku.attrValues).join(" ");
+    return Object.values(item.sysProductSku.attrValues).join("，");
   }
   return "";
 };

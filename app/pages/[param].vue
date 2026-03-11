@@ -135,7 +135,7 @@
     class="deliver-info"
     :class="
       productInfo?.status === 0 ||
-      (productInfo?.commentList && productInfo?.commentList.length > 0)
+      (productInfo?.comments && productInfo?.comments.length > 0)
         ? 'bottomnone'
         : ''
     "
@@ -314,7 +314,7 @@
     </div>
   </div>
   <!-- 商品评论 -->
-  <JtProductComments :comments="productInfo?.commentList || []" />
+  <JtProductComments :comments="productInfo?.comments || []" />
 
   <!-- 底部按钮 -->
   <div
@@ -606,79 +606,6 @@ const fetchData = async () => {
         tipMsg.value = t("single.productUnavailable");
         // return;
       }
-      // 注入虚拟评论数据用于样式开发验证
-      if (!product.data.commentList || product.data.commentList.length === 0) {
-        product.data.commentList = [
-          {
-            userName: "Anson111",
-            starLevel: 5,
-            commentTime: "2026-03-03 12:00:00",
-            content: "这个商品非常好，物美价廉",
-            images: [],
-          },
-          {
-            userName: "SarahW222",
-            starLevel: 4,
-            commentTime: "2026-03-04 10:30:00",
-            content: "这个商品非常好，物美价廉，物流也很快，包装严实。",
-            images: [
-              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
-            ],
-          },
-          {
-            userName: "JamesBond333",
-            starLevel: 5,
-            commentTime: "2026-03-05 09:00:00",
-            content:
-              "Very good product, highly recommend! 这个商品非常好，物美价廉，物美价廉，物美价廉。",
-            images: [
-              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
-            ],
-          },
-          {
-            userName: "Mokkey444",
-            starLevel: 3,
-            commentTime: "2026-03-06 15:20:00",
-            content: "还行吧，主要是配送快。",
-            images: [],
-          },
-          {
-            userName: "Anson",
-            starLevel: 5,
-            commentTime: "2026-03-03 12:00:00",
-            content: "这个商品非常好，物美价廉",
-            images: [],
-          },
-          {
-            userName: "SarahW",
-            starLevel: 4,
-            commentTime: "2026-03-04 10:30:00",
-            content: "这个商品非常好，物美价廉，物流也很快，包装严实。",
-            images: [
-              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
-            ],
-          },
-          {
-            userName: "JamesBond",
-            starLevel: 5,
-            commentTime: "2026-03-05 09:00:00",
-            content:
-              "Very good product, highly recommend! 这个商品非常好，物美价廉，物美价廉，物美价廉。",
-            images: [
-              "https://pic3.zhimg.com/v2-fdee089bc15b534bce0a10f83e1acf88_1440w.jpg",
-              "https://p9-xtjj-sign.byteimg.com/tos-cn-i-73owjymdk6/7d12f7153c294c22acc5b839fa5ca593~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAg5oqA5pyv54is54is6Jm-:q75.awebp?rk3s=f64ab15b&x-expires=1772923874&x-signature=zZFTvRJ0%2BfPidnSHE1lofNCsKHk%3D",
-            ],
-          },
-          {
-            userName: "Mokkey",
-            starLevel: 3,
-            commentTime: "2026-03-06 15:20:00",
-            content: "还行吧，主要是配送快。",
-            images: [],
-          },
-        ];
-      }
-
       // 初始化 Facebook Pixel（异步但不阻塞）
       initMetaPinxel(product.data.fbPixelIds);
       productDetail.value = product.data.productDetail || null;
