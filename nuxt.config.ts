@@ -1,5 +1,5 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import type { NuxtConfig } from "nuxt/config";
+import legacy from "@vitejs/plugin-legacy";
 
 // 扩展类型解决 TS 报错
 declare module "nuxt/config" {
@@ -11,6 +11,23 @@ declare module "nuxt/config" {
 }
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
+  app: {
+    head: {
+      script: [
+        {
+          innerHTML: `
+            if (typeof Object.hasOwn !== 'function') {
+              Object.hasOwn = function(obj, prop) {
+                if (obj === null || obj === undefined) return false;
+                return Object.prototype.hasOwnProperty.call(obj, prop);
+              };
+            }
+          `,
+          type: "text/javascript",
+        },
+      ],
+    },
+  },
   runtimeConfig: {
     public: {
       // 这里的变量会暴露给客户端和服务器
@@ -33,6 +50,22 @@ export default defineNuxtConfig({
   ],
   pinia: {
     autoImports: ["defineStore"],
+  },
+  vite: {
+    plugins: [
+      legacy({
+        targets: ["edge >= 92", "chrome >= 60"],
+        additionalLegacyPolyfills: [
+          "core-js/actual/object/has-own",
+          "core-js/actual/array/at",
+        ],
+      }),
+    ],
+    optimizeDeps: {
+      esbuildOptions: {
+        target: "es2020",
+      },
+    },
   },
   routeRules: {
     "/:param": {
