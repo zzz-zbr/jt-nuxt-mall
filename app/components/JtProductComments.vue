@@ -352,6 +352,8 @@ onBeforeUnmount(() => {
   color: #333;
   line-height: 1.5;
   margin-bottom: 10px;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .comment-images {

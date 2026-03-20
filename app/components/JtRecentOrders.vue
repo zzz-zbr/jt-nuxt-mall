@@ -198,7 +198,7 @@ onBeforeUnmount(() => {
 }
 
 .name-col {
-  width: 18%;
+  width: 15%;
   flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
