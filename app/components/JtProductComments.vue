@@ -138,8 +138,16 @@ const processedComments = computed(() => {
  * 创建用于显示的评论列表，通过复制原始评论实现无缝滚动效果
  * @returns 包含两份原始评论的数组，用于无缝循环展示
  */
+const isScrollEnabled = ref(false);
+
+/**
+ * 创建用于显示的评论列表
+ * 如果列表高度不足以填满容器，则只展示原本的消息，不产生循环；
+ * 否则为了实现无缝滚动效果，复制原始评论一份放在后面。
+ */
 const displayComments = computed(() => {
   if (processedComments.value.length === 0) return [];
+  if (!isScrollEnabled.value) return processedComments.value;
   return [...processedComments.value, ...processedComments.value];
 });
 
@@ -255,16 +263,26 @@ const startScroll = () => {
     return;
   }
 
-  const totalHeight = scrollBoxRef.value.scrollHeight;
-  const loopHeight = totalHeight / 2;
+  const currentHeight = scrollBoxRef.value.scrollHeight;
+  // 如果当前是滚动状态，scrollHeight 是两份的高度，单份高度为一半
+  // 如果是非滚动状态，scrollHeight 就是单份的高度
+  const singleSetHeight = isScrollEnabled.value
+    ? currentHeight / 2
+    : currentHeight;
+  const wrapperHeight = wrapperRef.value.clientHeight;
 
-  if (loopHeight > 0) {
+  // 如果单份高度小于等于容器高度，则不进行滚动展示
+  isScrollEnabled.value = singleSetHeight > wrapperHeight;
+
+  if (isScrollEnabled.value) {
     if (!hovering.value && !isPreviewing.value) {
       translateY.value += 0.4;
-      if (translateY.value >= loopHeight) {
+      if (translateY.value >= singleSetHeight) {
         translateY.value = 0;
       }
     }
+  } else {
+    translateY.value = 0;
   }
 
   rafId = requestAnimationFrame(startScroll);
