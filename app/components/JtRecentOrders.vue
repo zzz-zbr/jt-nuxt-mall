@@ -87,9 +87,25 @@ const maskName = (name: string) => {
 
 const parseSpec = (item: any) => {
   if (!item) return "";
-  if (item.sysProductSku && item.sysProductSku.attrValues) {
-    return Object.values(item.sysProductSku.attrValues).join("，");
+  // 优先从 productSpecJSON 取规格
+  if (item.productSpecJSON) {
+    try {
+      const specObj =
+        typeof item.productSpecJSON === "string"
+          ? JSON.parse(item.productSpecJSON)
+          : item.productSpecJSON;
+      if (specObj && typeof specObj === "object") {
+        const values = Object.values(specObj).filter(
+          (v) => v !== null && v !== undefined && v !== "",
+        );
+        if (values.length > 0) return values.join("，");
+      }
+    } catch {
+      // JSON 解析失败，降级到 productSpec
+    }
   }
+  // 降级到 productSpec 字符串
+  if (item.productSpec) return item.productSpec;
   return "";
 };
 
