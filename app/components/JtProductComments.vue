@@ -372,6 +372,7 @@ onBeforeUnmount(() => {
   margin-bottom: 10px;
   overflow-wrap: break-word;
   word-break: keep-all;
+  white-space: pre-wrap;
 }
 
 .comment-images {
